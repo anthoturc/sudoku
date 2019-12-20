@@ -15,9 +15,19 @@ public class Board {
 
     private static int N = 9;
     private char[][] board; // TODO: make this a board of Cell objects
+    public static final char EMPTY = '0';
 
     public Board() {
         this.board = new char[N][N];
+    }
+
+    public Board(Board other) {
+        this.board = new char[N][N];
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < N; ++j) {
+                this.board[i][j] = other.get(i, j);
+            }
+        }
     }
 
     void set(int row, int col, char val) {
@@ -65,6 +75,8 @@ public class Board {
                 ++i;
                 j = 0;
             }
+
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("File does not exist, please enter a valid file");
         } catch (IOException e) {
