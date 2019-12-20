@@ -12,7 +12,10 @@ public class GameTimer extends JTextField implements Runnable {
     private static final int sleepTime = 100; // ms
 
     private Date start;
+    private Date curr;
     private SimpleDateFormat sdf;
+    private volatile boolean stopThread = false;
+    private Thread stopWatchThread;
 
     public GameTimer() {
 
@@ -23,18 +26,18 @@ public class GameTimer extends JTextField implements Runnable {
         this.setBorder(BorderFactory.createEmptyBorder());
 
         this.start = new Date();
+        this.curr = new Date();
+
         this.sdf = new SimpleDateFormat(format);
 
-        Thread watchThread = new Thread(this);
-        watchThread.start();
+        this.stopWatchThread = new Thread(this);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
-        while (true) {
-            Date now = new Date();
-            String time = this.sdf.format(now.getTime() - this.start.getTime());
+        while (!stopThread) {
+            this.curr = new Date();
+            String time = this.sdf.format(this.curr.getTime() - this.start.getTime());
             this.setText(time);
 
             try {
@@ -43,5 +46,19 @@ public class GameTimer extends JTextField implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    // TODO: find a better way to do this
+    // I have a feeling its behavior is not consistent
+    public String totalTime() {
+        return this.sdf.format(this.curr.getTime() - this.start.getTime());
+    }
+
+    public void startTimer() {
+        this.stopWatchThread.start();
+    }
+
+    public void stopTimer() {
+        this.stopThread = true;
     }
 }

@@ -16,9 +16,11 @@ public class Board {
     private static int N = 9;
     private char[][] board; // TODO: make this a board of Cell objects
     public static final char EMPTY = '0';
+    private int numEmptyCells;
 
     public Board() {
         this.board = new char[N][N];
+        this.numEmptyCells = 0;
     }
 
     public Board(Board other) {
@@ -26,6 +28,9 @@ public class Board {
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
                 this.board[i][j] = other.get(i, j);
+                if (this.board[i][j] == EMPTY) {
+                    ++numEmptyCells;
+                }
             }
         }
     }
@@ -59,6 +64,7 @@ public class Board {
     }
 
     public void setBoard(String fName) {
+        this.numEmptyCells = 0;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fName));
             String s = reader.readLine();
@@ -69,6 +75,9 @@ public class Board {
                 String[] rowElements = s.split(" ");
                 for (String el : rowElements) {
                     this.board[i][j] = el.charAt(0);
+                    if (this.board[i][j] == EMPTY) {
+                        ++this.numEmptyCells;
+                    }
                     ++j;
                 }
                 s = reader.readLine();
@@ -86,5 +95,9 @@ public class Board {
 
     public int size() {
         return this.board.length;
+    }
+
+    public int getNumEmptyCells() {
+        return this.numEmptyCells;
     }
 }
