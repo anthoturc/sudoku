@@ -7,4 +7,4 @@ So far, the board will start out by solving the instance of the game and then re
 
 ![](https://github.com/anthoturc/sudoku/blob/master/sudoku.PNG)
 
-More to come later! 
+I will add more about how to run the app and updates as I go. 
