@@ -14,7 +14,7 @@ public class SudokuCell extends JTextField {
         this.setFont(new Font(fontFam, Font.BOLD, fontSz));
         this.setText(defaultVal);
         this.setEditable(true);
-        this.setHorizontalAlignment(JTextField.CENTER);
+        this.setHorizontalAlignment(CENTER);
         this.setForeground(Color.BLACK);
     }
 

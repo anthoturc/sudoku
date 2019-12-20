@@ -7,75 +7,51 @@ public class Sudoku extends JFrame {
     private static final String gameName = "Sudoku";
     private static final String boardsPath = "C:\\Users\\antho\\Desktop\\Side_Projects\\Sudoku\\boards\\";
 
-    private static final int defaultW = 500;
-    private static final int defaultH = 500;
     private static final int gridSz = 9;
     private static final int cellSz = 60;
-    private static final boolean resizable = false;
+    private static final boolean notResizable = false;
 
-    private Container gameContainer;
-
-    private SudokuCell[] cells;
-    private SudokuSolver solver;
-    private Board gameBoard;
-    private Board solutionBoard;
-    private int w, h;
-
-    public Sudoku(int w, int h, int mode) {
+    public Sudoku(int mode) {
 
 
         super(gameName);
 
-        this.gameContainer = getContentPane();
-        this.gameContainer.setLayout(new GridLayout(gridSz, gridSz));
+        Container gameContainer = getContentPane();
 
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(gridSz, gridSz));
+        mainPanel.setPreferredSize(new Dimension(gridSz * cellSz, gridSz * cellSz));
+
+        JPanel timerPanel = new JPanel();
+        timerPanel.add(new GameTimer());
+
+        gameContainer.setLayout(new BorderLayout());
+        gameContainer.add(mainPanel, BorderLayout.CENTER);
+        gameContainer.add(timerPanel, BorderLayout.PAGE_END);
 
         String board = getBoardName(mode);
         if (board.length() == 0) return;
 
-        this.gameBoard = new Board();
-        this.gameBoard.setBoard(boardsPath + board);
+        Board gameBoard = new Board();
+        gameBoard.setBoard(boardsPath + board);
 
-        this.solutionBoard = new Board(this.gameBoard);
+        Board solutionBoard = (new SudokuSolver(new Board(gameBoard))).solve();
 
-        this.solver = new SudokuSolver(this.solutionBoard);
-        this.solutionBoard = this.solver.solve();
-
-        int totalCells = gridSz * gridSz;
-        this.cells = new SudokuCell[totalCells];
         for (int i = 0; i < gridSz; ++i) {
             for (int j = 0; j < gridSz; ++j) {
-                int idx = i * gridSz + j;
-                char gameBoardVal = this.gameBoard.get(i, j);
-                this.cells[idx] = new SudokuCell(this.solutionBoard.get(i, j));
+                char gameBoardVal = gameBoard.get(i, j);
+                SudokuCell cell = new SudokuCell(solutionBoard.get(i, j));
 
-                if (gameBoardVal != Board.EMPTY) {
-                    this.cells[idx].setText("" + this.gameBoard.get(i, j));
-                    this.cells[idx].setEditable(false);
-                    this.cells[idx].setBackground(new Color(240, 240, 240));
-                } else {
-                    this.cells[idx].setBackground(Color.PINK);
-                    this.cells[idx].addActionListener(e -> {
-                        String res = cells[idx].getText();
-                        if (res.compareTo(cells[idx].getSolution()) != 0) {
-                            cells[idx].setBackground(Color.RED);
-                        } else {
-                            cells[idx].setBackground(Color.GREEN);
-                            cells[idx].setEditable(false);
-                            cells[idx].setText("" + cells[idx].getSolution());
-                        }
-                    });
-                }
-                this.gameContainer.add(this.cells[idx]);
+                makeCell(cell, gameBoardVal);
+                mainPanel.add(cell);
             }
         }
 
-        this.gameContainer.setPreferredSize(new Dimension(gridSz * cellSz, gridSz * cellSz));
         pack();
 
         this.setLayout(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setResizable(resizable);
+        this.setResizable(notResizable);
         this.setVisible(true);
     }
 
@@ -107,5 +83,25 @@ public class Sudoku extends JFrame {
         }
 
         return boardsList[mode];
+    }
+
+    private void makeCell(SudokuCell cell, char val) {
+        if (val != Board.EMPTY) {
+            cell.setText("" + val);
+            cell.setEditable(false);
+            cell.setBackground(new Color(240, 240, 240));
+        } else {
+            cell.setBackground(Color.PINK);
+            cell.addActionListener(e -> {
+                String res = cell.getText();
+                if (res.compareTo(cell.getSolution()) != 0) {
+                    cell.setBackground(Color.RED);
+                } else {
+                    cell.setBackground(Color.GREEN);
+                    cell.setEditable(false);
+                    cell.setText("" + cell.getSolution());
+                }
+            });
+        }
     }
 }
