@@ -6,15 +6,17 @@
  *  functionality into GUI elements.
  **/
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Board {
 
+    private static final String inputDelimiter = " ";
+
     private static int N = 9;
-    private char[][] board; // TODO: make this a board of Cell objects
+    private char[][] board;
     public static final char EMPTY = '0';
     private int numEmptyCells;
 
@@ -24,6 +26,7 @@ public class Board {
     }
 
     public Board(Board other) {
+        this.numEmptyCells = 0;
         this.board = new char[N][N];
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
@@ -66,13 +69,12 @@ public class Board {
     public void setBoard(String fName) {
         this.numEmptyCells = 0;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(fName));
-            String s = reader.readLine();
+            Scanner reader = new Scanner(new File(fName));
             int i = 0, j = 0;
-
-            while (s != null) {
-                s = s.trim();
-                String[] rowElements = s.split(" ");
+            while (reader.hasNextLine()) {
+                String currLine = reader.nextLine();
+                currLine = currLine.trim();
+                String[] rowElements = currLine.split(inputDelimiter);
                 for (String el : rowElements) {
                     this.board[i][j] = el.charAt(0);
                     if (this.board[i][j] == EMPTY) {
@@ -80,12 +82,30 @@ public class Board {
                     }
                     ++j;
                 }
-                s = reader.readLine();
                 ++i;
                 j = 0;
             }
 
             reader.close();
+//            String s = reader.readLine();
+//            int i = 0, j = 0;
+//
+//            while (s != null) {
+//                s = s.trim();
+//                String[] rowElements = s.split(" ");
+//                for (String el : rowElements) {
+//                    this.board[i][j] = el.charAt(0);
+//                    if (this.board[i][j] == EMPTY) {
+//                        ++this.numEmptyCells;
+//                    }
+//                    ++j;
+//                }
+//                s = reader.readLine();
+//                ++i;
+//                j = 0;
+//            }
+//
+//            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("File does not exist, please enter a valid file");
         } catch (IOException e) {

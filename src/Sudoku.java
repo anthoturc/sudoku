@@ -3,10 +3,13 @@ import java.awt.*;
 import java.io.File;
 
 public class Sudoku extends JFrame {
+    private static final boolean DEBUG = false;
+
+    private static final String errorLog = "." + File.separator + "logs" + File.separator;
 
     private static final String numericHelperMessage = "All inputs should be in the range [1, 9]";
     private static final String gameName = "Sudoku";
-    private static final String boardsPath = "C:\\Users\\antho\\Desktop\\Side_Projects\\Sudoku\\boards\\";
+    private static final String boardsPath = "." + File.separator + "boards" + File.separator;
 
     private static final int gridSz = 9;
     private static final int cellSz = 60;
@@ -26,22 +29,25 @@ public class Sudoku extends JFrame {
         mainPanel.setLayout(new GridLayout(gridSz, gridSz));
         mainPanel.setPreferredSize(new Dimension(gridSz * cellSz, gridSz * cellSz));
 
-        JPanel timerPanel = new JPanel();
         this.sudokuTimer = new GameTimer();
-        timerPanel.add(sudokuTimer);
 
         gameContainer.setLayout(new BorderLayout());
         gameContainer.add(mainPanel, BorderLayout.CENTER);
-        gameContainer.add(timerPanel, BorderLayout.PAGE_END);
+        gameContainer.add(sudokuTimer, BorderLayout.PAGE_END);
 
         String board = getBoardName(mode);
-        if (board.length() == 0) return;
+        if (board.length() == 0) {
+            // TODO: make logging class so that these objects can all log errors?
+        }
 
         Board gameBoard = new Board();
         gameBoard.setBoard(boardsPath + board);
         this.numEmptyCells = gameBoard.getNumEmptyCells();
 
         Board solutionBoard = (new SudokuSolver(new Board(gameBoard))).solve();
+        if (DEBUG) {
+            System.out.println(solutionBoard);
+        }
 
         for (int i = 0; i < gridSz; ++i) {
             for (int j = 0; j < gridSz; ++j) {
@@ -61,6 +67,7 @@ public class Sudoku extends JFrame {
         this.setVisible(true);
 
         this.sudokuTimer.startTimer();
+
     }
 
     private String[] getBoardList() {
