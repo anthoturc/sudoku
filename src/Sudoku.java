@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class Sudoku extends JFrame {
     private static final boolean DEBUG = false;
 
-    private static final String errorLog = "." + File.separator + "logs" + File.separator;
 
     private static final String numericHelperMessage = "All inputs should be in the range [1, 9]";
     private static final String gameName = "Sudoku";
@@ -19,7 +19,6 @@ public class Sudoku extends JFrame {
     private int numEmptyCells;
 
     public Sudoku(int mode) {
-
 
         super(gameName);
 
@@ -37,7 +36,12 @@ public class Sudoku extends JFrame {
 
         String board = getBoardName(mode);
         if (board.length() == 0) {
-            // TODO: make logging class so that these objects can all log errors?
+            try {
+                Log.errorLog(new Exception().getStackTrace()[0], "No boards available");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
         }
 
         Board gameBoard = new Board();
